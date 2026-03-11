@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMG India — Note Entry</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo"><img src="images/PMG_LOGO.png" alt="PMG Logo"style="width:100%"></div>
+    <div>
+      <div class="nav-name">PMG <em>India</em></div>
+      <div class="nav-tag">Note Entry System</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-date" id="live-date">—</div>
+
+    
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ── STATS ── -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-box si-amber">📊</div>
+      <div><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total Entries</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-box si-blue">⚡</div>
+      <div><div class="stat-val" id="s-session">0</div><div class="stat-lbl">This Session</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-box si-teal">🔗</div>
+      <div><div class="stat-val" id="s-status" style="font-size:1rem;padding-top:4px">—</div><div class="stat-lbl">Sheet Status</div></div>
+    </div>
+  </div>
+
+  <!--
+    GAS SETUP PANEL
+    Hidden automatically by app.js when GAS_URL is properly set in config.js.
+    End users never see this. Only shown to admins during first-time setup.
+  -->
+  <div class="gas-panel" id="gas-banner">
+    <strong>⚙ First-time Setup — Connect to Google Sheets</strong>
+    <ol>
+      <li>Open <a href="https://script.google.com" target="_blank" style="color:var(--amber)">script.google.com</a> → New Project → delete existing code → paste script below → Save</li>
+      <li><strong>Deploy → New Deployment → Web App</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong> → Deploy → copy URL</li>
+      <li>Put the copied URL into your <code>.env</code> as <code>GAS_URL</code>, regenerate <code>js/config.js</code>, reload.</li>
+      <li>After any future script edits: <strong>Deploy → Manage Deployments → Edit → New Version → Deploy</strong></li>
+    </ol>
+    <button class="btn-gas-test" onclick="testConnection()" style="margin-top:12px">🔍 Test Current Connection</button>
+    <div class="gas-result" id="gas-test-result"></div>
+    <details>
+      <summary>📋 Show Apps Script code to paste</summary>
+      <pre id="gas-code"></pre>
+    </details>
+  </div>
+
+  <!-- ════════════ FORM ════════════ -->
+
+  <!-- Section 1 -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-ttl">Client & Note Information</div>
+        <div class="section-sub">Basic client details and note reference</div>
+      </div>
+      <div class="section-chip">Section A</div>
+    </div>
+    <div class="section-body">
+      <div class="g g4">
+        <div class="field hi">
+          <label class="flabel">Date Filled <span class="auto">AUTO</span></label>
+          <input type="date" id="f-date" readonly>
+        </div>
+        <div class="field">
+          <label class="flabel">Serial No <span class="req">*</span></label>
+          <input type="text" id="f-serial" placeholder="e.g. SN-00123">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Client Name <span class="req">*</span></label>
+          <input type="text" id="f-client" placeholder="Full name of client">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Place <span class="req">*</span></label>
+          <input type="text" id="f-place" placeholder="City / Location">
+        </div>
+        <div class="field">
+          <label class="flabel">Contact No</label>
+          <input type="tel" id="f-contact" placeholder="+91 98765 43210">
+        </div>
+        <div class="field">
+          <label class="flabel">Email</label>
+          <input type="email" id="f-email" placeholder="client@example.com">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Services <span class="req">*</span></label>
+          <input type="text" id="f-services" placeholder="Describe the services">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Up to Slab Which</label>
+          <input type="text" id="f-slab" placeholder="e.g. Slab A / 0–500000 ₹">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Fees <span class="req">*</span></label>
+          <input type="number" id="f-fees" placeholder="Amount in ₹" min="0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-ttl">Note Details</div>
+        <div class="section-sub">Currency note specifications and references</div>
+      </div>
+      <div class="section-chip">Section B</div>
+    </div>
+    <div class="section-body">
+      <div class="g g3">
+        <div class="field">
+          <label class="flabel">Note Serial</label>
+          <input type="text" id="f-noteserial" placeholder="857946">
+        </div>
+        <div class="field">
+          <label class="flabel">Denomination <span class="req">*</span></label>
+          <input type="text" id="f-denom" placeholder="e.g. ₹500, ₹2000">
+        </div>
+        <div class="field">
+          <label class="flabel">Governor <span class="req">*</span></label>
+          <select id="f-governor">
+            <option value="">— Select Governor —</option>
+            <option>Shaktikanta Das</option><option>Urjit Patel</option><option>Raghuram Rajan</option>
+            <option>D. Subbarao</option><option>Y. V. Reddy</option><option>C. Rangarajan</option>
+            <option>Bimal Jalan</option><option>S. Venkitaramanan</option><option>R. N. Malhotra</option>
+            <option>Manmohan Singh</option><option>I. G. Patel</option><option>K. R. Puri</option>
+            <option>S. Jagannathan</option><option>B. N. Adarkar</option><option>L. K. Jha</option>
+            <option>P. C. Bhattacharya</option><option>H. V. R. Iengar</option><option>K. G. Ambegaokar</option>
+            <option>B. Rama Rau</option><option>C. D. Deshmukh</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="flabel">Prefix</label>
+          <input type="text" id="f-prefix" placeholder="e.g. 7AA, 8BB">
+        </div>
+        <div class="field">
+          <label class="flabel">Insert</label>
+          <input type="text" id="f-insert" placeholder="A,B,C">
+        </div>
+        <div class="field">
+          <label class="flabel">Watermark</label>
+          <input type="text" id="f-watermark" placeholder="M.K.Gandhi">
+        </div>
+        <div class="field">
+          <label class="flabel">Year</label>
+          <input type="number" id="f-year" placeholder="e.g. 2020" min="1900" max="2099">
+        </div>
+        <div class="field s2">
+          <label class="flabel">Reference</label>
+          <input type="text" id="f-ref" placeholder="Catalogue / Reference number">
+        </div>
+        <div class="field">
+          <label class="flabel">Customer Demand</label>
+          <input type="text" id="f-demand" placeholder="e.g. ₹1500 or Swap">
+        </div>
+        <div class="field s3">
+          <label class="flabel">Remark</label>
+          <textarea id="f-remark" placeholder="Any additional notes or remarks..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-row">
+    <div class="submit-note">Fields marked <em>*</em> are required &nbsp;·&nbsp; Date is auto-filled</div>
+    <div class="submit-btns">
+      <button class="btn-reset" onclick="resetForm()">↺ Reset</button>
+      <button class="btn-submit" id="submit-btn" onclick="submitForm()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+        </svg>
+        Save Entry to Sheets
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════ TABLE ════════════ -->
+  <div class="divider"></div>
+
+  <div class="notes-hdr">
+    <div class="notes-hdr-left">
+      <div class="eyebrow">📂 Local History</div>
+      <h2>Submitted Notes</h2>
+    </div>
+    <div class="notes-toolbar">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input class="notes-search" type="text" id="entry-search" placeholder="Search serial, name, denom…" oninput="renderTable()">
+      </div>
+      <select class="notes-filter" id="filter-gov" onchange="renderTable()">
+        <option value="">All Governors</option>
+        <option>Shaktikanta Das</option><option>Urjit Patel</option><option>Raghuram Rajan</option>
+        <option>D. Subbarao</option><option>Y. V. Reddy</option><option>C. Rangarajan</option>
+        <option>Bimal Jalan</option>
+      </select>
+      <button class="btn-bill" id="bill-btn" onclick="openBillModal()">
+        🧾 Generate Bill (<span id="bill-cnt">0</span>)
+      </button>
+      <button class="btn-clr" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <div class="notes-meta">
+    <span id="meta-txt">No entries yet</span>
+    <span class="expiry-chip">⏳ Auto-expire after 14 days</span>
+  </div>
+
+  <div class="tbl-card">
+    <div class="tbl-wrap">
+      <table class="ntbl">
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="tbl-chk" id="chk-all" onchange="toggleAll(this)"></th>
+            <th>Serial No</th><th>Date</th><th>Client Name</th><th>Denomination</th>
+            <th>Governor</th><th>Note Serial</th><th>Prefix / Insert</th>
+            <th>Year</th><th>Fees</th><th>Expires</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="ntbl-body">
+          <tr><td colspan="12" class="tbl-empty">
+            <span class="ei">📭</span>
+            <p>No entries yet</p>
+            <small>Submit your first entry above</small>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<!-- ════════════ BILL MODAL ════════════ -->
+<div class="modal-ov" id="bill-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-ttl">🧾 Generate Submission Form</div>
+      <button class="modal-cls" onclick="closeBillModal()">✕</button>
+    </div>
+    <div class="modal-bdy">
+      <div class="minfo" id="modal-info">Selected <strong id="modal-cnt">0</strong> notes</div>
+      <div class="mg2">
+        <div class="mf"><label>Submission Form No</label><input type="text" id="b-subno" placeholder="e.g. PMG-2024-001"></div>
+        <div class="mf"><label>Date *</label><input type="date" id="b-date" required></div>
+      </div>
+      <div class="mf"><label>Customer / Dealer Name *</label><input type="text" id="b-customer" required></div>
+      <div class="mf"><label>Address *</label><input type="text" id="b-address" required></div>
+      <div class="mg3">
+        <div class="mf"><label>Near / Opp</label><input type="text" id="b-nearopp"></div>
+        <div class="mf"><label>City</label><input type="text" id="b-city"></div>
+        <div class="mf"><label>Pin</label><input type="text" id="b-pin" maxlength="6"></div>
+      </div>
+      <div class="mg2">
+        <div class="mf"><label>Mobile *</label><input type="tel" id="b-mobile" maxlength="10" required></div>
+        <div class="mf"><label>Email *</label><input type="email" id="b-email" required></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn-mcancel" onclick="closeBillModal()">Cancel</button>
+      <button class="btn-mprint" onclick="printBill()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <path d="M6 14h12v8H6z"/>
+        </svg>
+        Generate & Print
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+<!-- config.js MUST be loaded before app.js — it sets window.CONFIG -->
+<script src="config.js"></script>
+
+<script src="index.js"></script>
+</body>
+</html>
