@@ -2,5 +2,10 @@
   "version": 2,
   "builds": [
     { "src": "app.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+      { "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico))", "dest": "/public/$1" },
+     { "src": "/", "dest": "/app.js" },
+    { "src": "/(.*)", "dest": "/app.js" }
   ]
 }
